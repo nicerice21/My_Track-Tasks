@@ -13,5 +13,27 @@ database_id = "d6dcc3d4-ac27-415b-9e32-8875010ab481"
 
 [vars]
 ALLOWED_EMAIL = "task@ricezero.fun"
-ACCESS_AUDIENCE = "<your-access-audience-tag>"
+ACCESS_AUDIENCE = "553ba0e3de67718db1445920d95fed96a66716c8fcdf536cb4d02b6b4e4fb3fa"
 ACCESS_TEAM_DOMAIN = "ricezero.cloudflareaccess.com"
+
+# ...
+[observability]
+enabled = true
+head_sampling_rate = 1
+redact_query_string = false
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
+
+[observability.traces]
+enabled = true
+head_sampling_rate = 1
+persist = true
+
+[observability.issue_detection]
+enabled = false
+# ...
+
