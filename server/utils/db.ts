@@ -4,8 +4,8 @@ import * as schema from '../db/schema';
 export { schema };
 
 export function useD1(event: H3Event) {
-  const cloudflare = event.context.cloudflare as { env: { DB?: D1Database } } | undefined;
-  const db = cloudflare?.env?.DB;
+  const cloudflare = event.context.cloudflare as { env: { MY_TODO_DB?: D1Database } } | undefined;
+  const db = cloudflare?.env?.MY_TODO_DB;
 
   if (!db) {
     throw createError({

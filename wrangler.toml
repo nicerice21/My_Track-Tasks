@@ -12,6 +12,6 @@ database_name = "my-todo-db"
 database_id = "d6dcc3d4-ac27-415b-9e32-8875010ab481"
 
 [vars]
-ALLOWED_EMAIL = "user@example.com"
+ALLOWED_EMAIL = "task@ricezero.fun"
 ACCESS_AUDIENCE = "<your-access-audience-tag>"
-ACCESS_TEAM_DOMAIN = "<your-team>.cloudflareaccess.com"
+ACCESS_TEAM_DOMAIN = "ricezero.cloudflareaccess.com"
