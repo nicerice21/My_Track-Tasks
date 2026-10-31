@@ -2,6 +2,8 @@
 
 Asana 風の、機械・情報系学生向け個人用タスク管理ツールの設計ドキュメント・プロトタイプ置き場。
 
+**対象クライアント**: Windows PC（Chrome/Edge）、Android（Chrome）。Apple デバイスは現時点では対象外。
+
 ## 概要
 
 - **対象ユーザー**: 機械・情報系の学生（1人利用）
@@ -20,6 +22,21 @@ Asana 風の、機械・情報系学生向け個人用タスク管理ツール�
 4. [PWA 設計](docs/04-pwa.md)
 5. [デプロイ・Access 設定](docs/05-deployment.md)
 6. [UI/画面設計](docs/06-ui-design.md)
+7. [UI ライブラリ選定](docs/07-ui-library-selection.md)
+
+## 開発環境のセットアップ
+
+```bash
+npm install
+npm run dev
+```
+
+## 本番ビルド・デプロイ
+
+```bash
+npm run build:cloudflare
+npx wrangler deploy
+```
 
 ## 技術スタック
 
@@ -30,5 +47,5 @@ Asana 風の、機械・情報系学生向け個人用タスク管理ツール�
 | ORM | Drizzle ORM（D1 対応） |
 | DB | Cloudflare D1 |
 | 認証 | Cloudflare Access |
-| PWA | `@vite-pwa/nuxt` |
-| スタイリング | Tailwind CSS（推奨） |
+| PWA | 手動 (`manifest.json` + Service Worker) |
+| スタイリング | Tailwind CSS + DaisyUI（推奨） |

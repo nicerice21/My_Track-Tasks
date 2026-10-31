@@ -1,0 +1,17 @@
+name = "my-todo"
+main = "./.output/server/index.mjs"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat_v2"]
+
+[build]
+command = "npx nuxt build --preset=cloudflare_module"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my-todo-db"
+database_id = "<your-database-id>"
+
+[vars]
+ALLOWED_EMAIL = "user@example.com"
+ACCESS_AUDIENCE = "<your-access-audience-tag>"
+ACCESS_TEAM_DOMAIN = "<your-team>.cloudflareaccess.com"

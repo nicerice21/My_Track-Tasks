@@ -37,7 +37,8 @@
 | **Drizzle ORM** | TypeScript ファーストで型安全。D1 対応が公式にサポートされている。 |
 | **Cloudflare D1** | サーバレス SQLite。小〜中規模の個人アプリに十分な性能。無料枠が大きい。 |
 | **Cloudflare Access** | Workers フロントの前に置くだけで全体を保護できる。認証ロジックを自前実装する必要がない。 |
-| **@vite-pwa/nuxt** | Nuxt プロジェクトに PWA 機能（マニフェスト、Service Worker）を最小構成で追加できる。 |
+| **Tailwind CSS + DaisyUI** | 軽量なユーティリティ CSS + シンプルなコンポーネント。PWA に最適。 |
+| **手動 PWA** | `manifest.json` + カスタム Service Worker。ライブラリ依存を減らし軽量化。 |
 
 ## 3. 認証フロー
 
