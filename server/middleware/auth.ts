@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const config = useRuntimeConfig(event);
-  const token = getHeader(event, 'CF-Access-Jwt-Assertion');
+  const token = getHeader(event, 'cf-access-jwt-assertion') ?? getHeader(event, 'CF-Access-Jwt-Assertion');
 
   if (!token) {
     throw createError({
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const teamDomain = config.accessTeamDomain;
+  const teamDomain = config.accessTeamDomain?.replace(/\/$/, '');
   const audience = config.accessAudience;
 
   if (!teamDomain || !audience) {
@@ -26,10 +26,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const issuer = teamDomain.startsWith('http') ? teamDomain : `https://${teamDomain}`;
+
   try {
-    const jwks = createRemoteJWKSet(new URL(`https://${teamDomain}/cdn-cgi/access/certs`));
+    const jwks = createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`));
     const { payload } = await jwtVerify(token, jwks, {
-      issuer: `https://${teamDomain}`,
+      issuer,
       audience,
     });
 
@@ -49,7 +51,7 @@ export default defineEventHandler(async (event) => {
     }
 
     event.context.user = { email };
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 401,
       statusMessage: 'Invalid Cloudflare Access token',

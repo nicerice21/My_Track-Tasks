@@ -1,5 +1,7 @@
 # 05. デプロイ・Cloudflare Access 設定
 
+このドキュメントは [Cloudflare Developers](https://developers.cloudflare.com/) の最新情報を参考にしている。
+
 ## 1. 必要なもの
 
 - Cloudflare アカウント
@@ -10,18 +12,54 @@
 ## 2. Wrangler 初期設定
 
 ```bash
-# プロジェクト作成後
 npm install -g wrangler
 wrangler login
 ```
 
-## 3. wrangler.toml
+## 3. D1 データベースの作成
+
+```bash
+npx wrangler d1 create my-todo-db
+```
+
+出力例：
+
+```text
+✅ Successfully created DB 'my-todo-db' in region ENAM
+Created your database using D1's new storage backend. The new storage backend is not yet recommended for production workloads,
+but backs up your data via point-in-time restore.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my-todo-db"
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
+
+出力された `database_id` を `wrangler.toml` に記載する。
+
+## 4. マイグレーションの適用
+
+### ローカル
+
+```bash
+npx wrangler d1 migrations apply my-todo-db --local
+```
+
+### リモート
+
+```bash
+npx wrangler d1 migrations apply my-todo-db --remote
+```
+
+公式ドキュメント: [D1 wrangler commands](https://developers.cloudflare.com/d1/wrangler-commands/)
+
+## 5. wrangler.toml
 
 ```toml
 name = "my-todo"
 main = "./.output/server/index.mjs"
 compatibility_date = "2026-04-01"
-compatibility_flags = ["nodejs_compat_v2"]
+compatibility_flags = ["nodejs_compat"]
 
 [build]
 command = "npx nuxt build --preset=cloudflare_module"
@@ -35,22 +73,6 @@ database_id = "<your-database-id>"
 ALLOWED_EMAIL = "user@example.com"
 ACCESS_AUDIENCE = "<your-access-audience-tag>"
 ACCESS_TEAM_DOMAIN = "<your-team>.cloudflareaccess.com"
-```
-
-## 4. D1 データベース作成
-
-```bash
-wrangler d1 create my-todo-db
-# 出力された database_id を wrangler.toml に記載
-```
-
-## 5. マイグレーション実行
-
-```bash
-wrangler d1 migrations create my-todo-db init
-# migrations/0001_init.sql を編集
-wrangler d1 migrations apply my-todo-db --local
-wrangler d1 migrations apply my-todo-db --remote
 ```
 
 ## 6. Cloudflare Access 設定
@@ -79,55 +101,29 @@ wrangler d1 migrations apply my-todo-db --remote
 | Action | Allow |
 | Rule | `Emails` → 自分のメールアドレス |
 
-### 6.4 Workers 側で検証
+### 6.4 Workers 側で JWT を検証
 
-Nuxt サーバミドルウェアで Access からの JWT を検証する。
+Cloudflare Access は `cf-access-jwt-assertion` ヘッダーに JWT を渡す。`server/middleware/auth.ts` で検証している。
 
-```ts
-// server/middleware/auth.ts
-import { createRemoteJWKSet, jwtVerify } from 'jose';
-
-const ACCESS_CERTS_URL = `https://${process.env.ACCESS_TEAM_DOMAIN}/cdn-cgi/access/certs`;
-
-export default defineEventHandler(async (event) => {
-  if (!event.path.startsWith('/api/')) return;
-
-  const token = getHeader(event, 'CF-Access-Jwt-Assertion');
-  if (!token) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
-  }
-
-  const JWKS = createRemoteJWKSet(new URL(ACCESS_CERTS_URL));
-  try {
-    const { payload } = await jwtVerify(token, JWKS, {
-      issuer: `https://${process.env.ACCESS_TEAM_DOMAIN}`,
-      audience: process.env.ACCESS_AUDIENCE,
-    });
-
-    const email = payload.email as string;
-    if (email !== process.env.ALLOWED_EMAIL) {
-      throw createError({ statusCode: 403, statusMessage: 'Forbidden' });
-    }
-
-    event.context.user = { email };
-  } catch {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
-  }
-});
-```
+公式ドキュメント: [Validate Access JWTs](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/)
 
 ## 7. ビルド・デプロイ
 
 ```bash
-# ローカル確認
-npm run dev
-
 # 本番ビルド
-npm run build
+npm run build:cloudflare
 
 # デプロイ
-wrangler deploy
+npx wrangler deploy
 ```
+
+または Wrangler の自動検出を使う場合：
+
+```bash
+npx wrangler deploy
+```
+
+公式ドキュメント: [Deploy a Nuxt application to Workers](https://developers.cloudflare.com/workers/frameworks/web-apps/nuxt/)
 
 ## 8. カスタムドメイン設定
 
@@ -141,7 +137,7 @@ wrangler deploy
 |---|---|---|
 | `ALLOWED_EMAIL` | 許可するメールアドレス | wrangler.toml / Secrets |
 | `ACCESS_AUDIENCE` | Access アプリケーションの Audience Tag | wrangler.toml |
-| `ACCESS_TEAM_DOMAIN` | Cloudflare Zero Trust チームドメイン | wrangler.toml |
+| `ACCESS_TEAM_DOMAIN` | Cloudflare Zero Trust チームドメイン（`https://` 不要） | wrangler.toml |
 | `DB` | D1 バインディング | wrangler.toml |
 
 ## 10. CI/CD（オプション）
@@ -163,7 +159,7 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:cloudflare
       - run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
