@@ -7,9 +7,13 @@ Personal task manager (Asana-style) for engineering students. Browser-only PWA o
 ```bash
 npm install
 npm run dev                 # http://localhost:3000
+npm test                    # Vitest unit tests (tests/**/*.test.ts)
+npm run typecheck           # vue-tsc typecheck (needs .nuxt generated first)
 npm run build:cloudflare   # build for Workers deployment
 npx wrangler deploy        # deploy (requires D1 + Access setup)
 ```
+
+Run `test` and `typecheck` before committing API/logic changes.
 
 ## Architecture
 
@@ -61,9 +65,17 @@ Required runtime config / `wrangler.toml` vars:
 
 Windows PC (Chrome/Edge) and Android (Chrome). Apple/Safari PWA specifics are intentionally out of scope.
 
+## Timestamp conventions
+
+Two timestamp styles coexist in the schema — do not mix them up:
+
+- **TEXT columns** (`created_at`, `updated_at`, `logged_at`) → ISO 8601 string via `new Date().toISOString()`.
+- **INTEGER columns** (`due_date`, `target_completion_date`, `completed_date`) → UNIX **milliseconds** via `Date.now()`. (Design docs show seconds in some examples; the code uses ms.)
+
 ## Gotchas
 
 - Use `npm run build:cloudflare`, not `npm run build`, when preparing for Workers.
 - `npm run deploy` runs `wrangler deploy`, but Wrangler expects the Cloudflare build output to exist; run `build:cloudflare` first.
 - PWA icons are SVG placeholders. Replace with PNGs if Android/Windows install prompts require them.
-- No lint, typecheck, or test scripts are configured yet. Add them in `package.json` when introducing tooling.
+- `tsconfig.json` extends `./.nuxt/tsconfig.json` and adds `types: ["node", "@cloudflare/workers-types"]`. Vitest's esbuild reads this tsconfig — if tests fail with `TSConfckParseError: .nuxt/tsconfig.app.json`, run `npx nuxt prepare` first.
+- Server API handlers use explicit relative imports for utils/schema (not `#imports` or `~`), so pure helpers stay unit-testable.
