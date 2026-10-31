@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 command = "npx nuxt build --preset=cloudflare_module"
 
 [[d1_databases]]
-binding = "my_todo_db"
+binding = "MY_TODO_DB"
 database_name = "my-todo-db"
 database_id = "d6dcc3d4-ac27-415b-9e32-8875010ab481"
 
