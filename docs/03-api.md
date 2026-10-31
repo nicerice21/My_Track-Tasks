@@ -2,6 +2,9 @@
 
 Nuxt の `server/api/` 配下に Nitro ハンドラを配置。すべてのエンドポイントは `/api/v1/` 配下。
 
+> **実装状況（Milestone 1）**: 科目・プロジェクト・タスクの CRUD とタスクの完了/未完了を実装済み。
+> 進捗ログ（progress-logs）とダッシュボード集計は Milestone 2/3 で実装する。
+
 ## 1. ベース URL
 
 ```
@@ -14,26 +17,21 @@ https://todo.example.com/api/v1
 
 ## 3. 共通レスポンス形式
 
+成功時は `{ "success": true, "data": ... }` を返す（`server/utils/response.ts` の `ok()`）。
+
 ```json
 {
   "success": true,
-  "data": { ... },
-  "error": null
+  "data": { ... }
 }
 ```
 
-エラー時：
+エラー時は Nitro 標準の `createError` を使う（`{ statusCode, statusMessage, ... }`）。ステータスコードは 400（バリデーション）/ 401（未認証）/ 403（所有者外）/ 404（未検出）/ 500（DB 未接続等）。
 
-```json
-{
-  "success": false,
-  "data": null,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "..."
-  }
-}
-```
+### タイムスタンプ規約
+
+- `created_at` / `updated_at` / `logged_at`（TEXT）: ISO 8601 文字列
+- `due_date` / `target_completion_date` / `completed_date`（INTEGER）: UNIX **ミリ秒**（`Date.now()`）
 
 ## 4. エンドポイント一覧
 
