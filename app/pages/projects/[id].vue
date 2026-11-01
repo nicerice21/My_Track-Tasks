@@ -87,7 +87,7 @@ onMounted(load);
               <span class="text-xs text-base-content/50">
                 {{ formatDate(new Date(log.loggedAt).getTime()) }}
               </span>
-              <span v-if="log.progressPercent" class="badge badge-sm">
+<span v-if="log.progressPercent !== null" class="badge badge-sm">
                 {{ log.progressPercent }}%
               </span>
             </div>
