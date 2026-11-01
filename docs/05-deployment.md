@@ -64,6 +64,10 @@ compatibility_flags = ["nodejs_compat"]
 [build]
 command = "npx nuxt build --preset=cloudflare_module"
 
+[assets]
+directory = "./.output/public"
+binding = "ASSETS"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "my-todo-db"
@@ -106,6 +110,23 @@ ACCESS_TEAM_DOMAIN = "<your-team>.cloudflareaccess.com"
 Cloudflare Access は `cf-access-jwt-assertion` ヘッダーに JWT を渡す。`server/middleware/auth.ts` で検証している。
 
 公式ドキュメント: [Validate Access JWTs](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/)
+
+### 6.5 PWA 用ファイルの Access バイパス（重要）
+
+PWA のマニフェスト・Service Worker・アイコンは、ブラウザが認証 Cookie を送らない場合があり、そのままでは Access のログイン画面にリダイレクトされて CORS エラーになる。次のパスを **Access の認証対象から除外（Bypass）** する。
+
+Zero Trust → Access → Applications → `MyToDo` → **Add policy** で、`Bypass` ポリシーを追加する。
+
+| パス | 用途 |
+|---|---|
+| `/manifest.json` | PWA マニフェスト |
+| `/sw.js` | Service Worker |
+| `/icon-*.svg` | PWA アイコン |
+
+> **補足**: これらのファイルは公開情報（機密なし）なので、バイパスしても問題ない。
+> 認証が必要なのは `/` と `/api/*` のみ。
+
+公式ドキュメント: [Cloudflare Access policies](https://developers.cloudflare.com/cloudflare-one/policies/access/)
 
 ## 7. ビルド・デプロイ
 
