@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
 
   // ローカル開発時: DEV_USER_EMAIL が設定されていれば認証をスキップする
-  if (config.devUserEmail) {
+  if ((import.meta.dev && config.devUserEmail)) {
     event.context.user = { email: config.devUserEmail };
     return;
   }
