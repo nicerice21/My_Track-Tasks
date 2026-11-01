@@ -1,9 +1,7 @@
 const CACHE_NAME = 'my-todo-v1';
-
-// 注意: `/` や `/manifest.json` は Cloudflare Access の認証を経由するため
-// プリキャッシュせず、ランタイムキャッシュで取得する。
-// (SW インストール時の fetch が Access ログインにリダイレクトされ失敗するのを防ぐ)
 const PRECACHE_ASSETS = [
+  '/',
+  '/manifest.json',
   '/icon-192x192.svg',
   '/icon-512x512.svg',
   '/icon-maskable-512x512.svg',
