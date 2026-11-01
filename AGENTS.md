@@ -1,5 +1,8 @@
 # AGENTS.md — MyToDo
 
+本プロジェクトでは日本語を使用する．応答やドキュメント，UIに正確な日本語を使用すること．
+Japanese is used in this project. Please use accurate Japanese for responses, documents, and the UI.
+
 Personal task manager (Asana-style) for engineering students. Browser-only PWA on Cloudflare Workers + D1, protected by Cloudflare Access.
 
 ## Quick commands
