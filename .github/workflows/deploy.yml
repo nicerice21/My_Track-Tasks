@@ -26,4 +26,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          postCommands: npx wrangler d1 migrations apply my-todo-db --remote
+          preCommands: npx wrangler d1 migrations apply my-todo-db --remote
