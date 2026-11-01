@@ -167,8 +167,18 @@ npx wrangler deploy
 
 | シークレット | 説明 |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | 「Edit Cloudflare Workers」権限を持つ API トークン |
+| `CLOUDFLARE_API_TOKEN` | 「Workers Scripts: Edit」**と「D1: Edit」の両方**の権限を持つ API トークン |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare アカウント ID |
+
+> **重要**: `wrangler deploy` には「Workers Scripts: Edit」、`wrangler d1 migrations apply` には「D1: Edit」が必要。
+> D1 権限がないと CI が `code: 7403`（account not authorized）で失敗する。
+
+API トークン作成時の権限設定（Cloudflare ダッシュボード → My Profile → API Tokens → Create Token → Custom token）:
+
+| スコープ | リソース | 権限 |
+|---|---|---|
+| Workers Scripts | Account | Edit |
+| D1 | Account | Edit |
 
 GitHub CLI で設定する場合：
 
