@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2026-04-01',
   srcDir: 'app/',
+  serverDir: 'server',
   devtools: { enabled: true },
 
   modules: [

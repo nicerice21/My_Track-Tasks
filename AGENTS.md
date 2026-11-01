@@ -22,7 +22,7 @@ Run `test` and `typecheck` before committing API/logic changes.
 
 ## Architecture
 
-- **Nuxt 3** with `app/` directory structure. `srcDir: 'app/'` is set **explicitly** in `nuxt.config.ts` — Nuxt 3 defaults to `.` (root), so without it the `app/` dir is silently ignored and `~`/auto-imports break.
+- **Nuxt 3** with `app/` directory structure. `srcDir: 'app/'` is set **explicitly** in `nuxt.config.ts` — Nuxt 3 defaults to `.` (root), so without it the `app/` dir is silently ignored and `~`/auto-imports break. **`serverDir: 'server'` must also be set** — Nuxt 3 defaults `serverDir` to `<srcDir>/server` (= `app/server/`, which doesn't exist), silently dropping all API routes from the production build.
 - **Nitro preset**: `cloudflare_module` (`nuxt.config.ts` and `wrangler.toml` must agree).
 - **API**: `server/api/v1/*` routes; auth in `server/middleware/auth.ts`.
 - **DB**: Cloudflare D1 via Drizzle ORM. Schema: `server/db/schema.ts`. Migrations: `migrations/`.
