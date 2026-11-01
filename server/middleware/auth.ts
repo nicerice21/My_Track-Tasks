@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
 
   // ローカル開発時: DEV_USER_EMAIL が設定されていれば認証をスキップする
-if (import.meta.dev && config.devUserEmail) {
+  if (config.devUserEmail) {
     event.context.user = { email: config.devUserEmail };
     return;
   }
@@ -35,33 +35,33 @@ if (import.meta.dev && config.devUserEmail) {
 
   const issuer = teamDomain.startsWith('http') ? teamDomain : `https://${teamDomain}`;
 
+  // JWT 検証（失敗時のみ 401 に変換する）
+  let payload;
   try {
     const jwks = createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`));
-    const { payload } = await jwtVerify(token, jwks, {
-      issuer,
-      audience,
-    });
-
-    const email = payload.email as string | undefined;
-    if (!email) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Email not found in token',
-      });
-    }
-
-    if (email !== config.allowedEmail) {
-      throw createError({
-        statusCode: 403,
-        statusMessage: 'Forbidden',
-      });
-    }
-
-    event.context.user = { email };
+    ({ payload } = await jwtVerify(token, jwks, { issuer, audience }));
   } catch {
     throw createError({
       statusCode: 401,
       statusMessage: 'Invalid Cloudflare Access token',
     });
   }
+
+  // 認可（メール一致）は検証とは別に扱い、403 を正しく返す
+  const email = payload.email as string | undefined;
+  if (!email) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Email not found in token',
+    });
+  }
+
+  if (email !== config.allowedEmail) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Forbidden',
+    });
+  }
+
+  event.context.user = { email };
 });
