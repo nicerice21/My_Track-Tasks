@@ -46,7 +46,7 @@ If you recreate the DB or change the binding, update both files.
 # local dev DB
 npm run db:migrate:local
 
-# remote production DB
+# remote production DB (required or /api/* returns 500)
 npx wrangler d1 migrations apply my-todo-db --remote
 ```
 
