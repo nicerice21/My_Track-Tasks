@@ -40,7 +40,13 @@ export default defineEventHandler(async (event) => {
   try {
     const jwks = createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`));
     ({ payload } = await jwtVerify(token, jwks, { issuer, audience }));
-  } catch {
+  } catch (error) {
+    // 実際の失敗理由をログに残す（wrangler tail / Cloudflare Logs で確認可能）
+    console.error('[auth] JWT verification failed', {
+      issuer,
+      audience,
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw createError({
       statusCode: 401,
       statusMessage: 'Invalid Cloudflare Access token',
