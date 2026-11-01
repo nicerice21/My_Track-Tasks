@@ -6,7 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+permissions:
+  contents: read
+
+jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     name: Deploy
