@@ -25,10 +25,11 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    allowedEmail: process.env.ALLOWED_EMAIL || '',
-    accessAudience: process.env.ACCESS_AUDIENCE || '',
-    accessTeamDomain: process.env.ACCESS_TEAM_DOMAIN || '',
+    // 本番では NUXT_ プレフィックスの環境変数で上書きされる
+    allowedEmail: '',
+    accessAudience: '',
+    accessTeamDomain: '',
     // ローカル開発用: 設定すると JWT 検証をスキップしてこのユーザーとして扱う
-    devUserEmail: process.env.DEV_USER_EMAIL || '',
+    devUserEmail: '',
   },
 });

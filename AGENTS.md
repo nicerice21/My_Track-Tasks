@@ -73,9 +73,10 @@ Required runtime config / `wrangler.toml` vars:
 
 ## Environment variables
 
-- `.env` is loaded for local dev by Nuxt.
-- Server runtime config is built from `process.env` at build time (`nuxt.config.ts` `runtimeConfig`).
-- Production vars come from `[vars]` in `wrangler.toml` (or Wrangler secrets).
+- **`NUXT_` prefix is mandatory.** `runtimeConfig` values are overridden at runtime ONLY by env vars starting with `NUXT_` (e.g. `NUXT_ALLOWED_EMAIL` → `runtimeConfig.allowedEmail`). In production, `[vars]` in `wrangler.toml` must use this prefix, otherwise the value is silently empty and auth fails with 500.
+- `.env` is loaded for local dev by Nuxt. Production does NOT read `.env` — set vars via `wrangler.toml` `[vars]` or Wrangler secrets.
+- `nuxt.config.ts` `runtimeConfig` should use plain string defaults (not `process.env.X`, which only works at build time).
+- `DEV_USER_EMAIL` is local-dev only; never set it in production.
 
 ## Target clients
 
