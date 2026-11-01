@@ -117,9 +117,16 @@ Cloudflare Access は `cf-access-jwt-assertion` ヘッダーに JWT を渡す。
 # 本番ビルド
 npm run build:cloudflare
 
+# D1 マイグレーション適用（初回・スキーマ変更時）
+npx wrangler d1 migrations apply my-todo-db --remote
+
 # デプロイ
 npx wrangler deploy
 ```
+
+> CI/CD（`.github/workflows/deploy.yml`）では `wrangler-action` の `preCommands` で
+> デプロイ前に自動で D1 マイグレーションを適用する。
+> **マイグレーション未適用だと `/api/v1/*` が 500 になる**ので注意。
 
 または Wrangler の自動検出を使う場合：
 
