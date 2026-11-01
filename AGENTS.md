@@ -15,6 +15,8 @@ npx wrangler deploy        # deploy (requires D1 + Access setup)
 
 Run `test` and `typecheck` before committing API/logic changes.
 
+**Node version matters**: `package-lock.json` was generated with npm 11 (Node 24+). `npm ci` with npm 10 (Node 22) fails the lockfile sync check. Use Node 24+ locally (`.nvmrc` pins `26`) and in CI (`node-version: 26`).
+
 ## Architecture
 
 - **Nuxt 3** with `app/` directory structure. `srcDir: 'app/'` is set **explicitly** in `nuxt.config.ts` — Nuxt 3 defaults to `.` (root), so without it the `app/` dir is silently ignored and `~`/auto-imports break.
