@@ -97,6 +97,7 @@ Two timestamp styles coexist in the schema — do not mix them up:
 ## Gotchas
 
 - Use `npm run build:cloudflare`, not `npm run build`, when preparing for Workers.
+- `wrangler.toml` **must** have `[assets] directory = "./.output/public"` — without it, `_nuxt/*.js` and icons 404 in production (static assets are not served).
 - `npm run deploy` runs `wrangler deploy`, but Wrangler expects the Cloudflare build output to exist; run `build:cloudflare` first.
 - PWA icons are SVG placeholders. Replace with PNGs if Android/Windows install prompts require them.
 - `tsconfig.json` extends `./.nuxt/tsconfig.json` and adds `types: ["node", "@cloudflare/workers-types"]`. Vitest's esbuild reads this tsconfig — if tests fail with `TSConfckParseError: .nuxt/tsconfig.app.json`, run `npx nuxt prepare` first.
