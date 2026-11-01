@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Subject, Task } from '~/types/models';
 import type { TaskFilters } from '~/stores/tasks';
+import { isTaskDone } from '~/utils/task';
 
 const tasksStore = useTasksStore();
 const subjectsStore = useSubjectsStore();
@@ -29,7 +30,7 @@ async function load() {
 }
 
 async function toggle(task: Task) {
-  if (task.status === 'completed') {
+  if (isTaskDone(task)) {
     await tasksStore.uncomplete(task.id);
   } else {
     await tasksStore.complete(task.id);

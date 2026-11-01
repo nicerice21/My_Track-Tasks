@@ -28,6 +28,7 @@ const form = reactive({
   priority: (props.task?.priority ?? 'medium') as TaskPriority,
   dueDate: msToDateInput(props.task?.dueDate ?? null),
   estimatedMinutes: props.task?.estimatedMinutes ?? null,
+  recurring: props.task?.recurrenceRule !== null,
   description: props.task?.description ?? '',
 });
 
@@ -41,6 +42,7 @@ function onSubmit() {
     priority: form.priority,
     dueDate: dateInputToMs(form.dueDate),
     estimatedMinutes: form.estimatedMinutes,
+    recurrenceRule: form.recurring ? 'FREQ=WEEKLY' : null,
     description: form.description || null,
   });
 }
@@ -119,6 +121,13 @@ function onSubmit() {
             placeholder="例：120"
           />
         </div>
+      </div>
+
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">毎週繰り返す</span>
+          <input v-model="form.recurring" type="checkbox" class="toggle toggle-sm" />
+        </label>
       </div>
 
       <div class="form-control">

@@ -53,14 +53,25 @@ export const useTasksStore = defineStore('tasks', {
       this.items = this.items.filter((t) => t.id !== id);
     },
     async complete(id: number) {
-      await useApi().post(`/tasks/${id}/complete`);
+      const res = await useApi().post<{ status: string; recurring: boolean }>(
+        `/tasks/${id}/complete`,
+      );
       const task = this.items.find((t) => t.id === id);
-      if (task) task.status = 'completed';
+      if (task) {
+        if (res.recurring) {
+          task.completedThisWeek = true;
+        } else {
+          task.status = 'completed';
+        }
+      }
     },
     async uncomplete(id: number) {
       await useApi().post(`/tasks/${id}/uncomplete`);
       const task = this.items.find((t) => t.id === id);
-      if (task) task.status = 'not_started';
+      if (task) {
+        task.completedThisWeek = false;
+        task.status = 'not_started';
+      }
     },
   },
 });

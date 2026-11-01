@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DashboardData, Task } from '~/types/models';
 import { formatDueDate } from '~/utils/format';
+import { isTaskDone } from '~/utils/task';
 
 const api = useApi();
 const tasksStore = useTasksStore();
@@ -22,7 +23,7 @@ async function load() {
 }
 
 async function toggle(task: Task) {
-  if (task.status === 'completed') {
+  if (isTaskDone(task)) {
     await tasksStore.uncomplete(task.id);
   } else {
     await tasksStore.complete(task.id);
