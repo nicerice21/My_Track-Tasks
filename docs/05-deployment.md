@@ -74,9 +74,9 @@ database_name = "my-todo-db"
 database_id = "<your-database-id>"
 
 [vars]
-ALLOWED_EMAIL = "user@example.com"
-ACCESS_AUDIENCE = "<your-access-audience-tag>"
-ACCESS_TEAM_DOMAIN = "<your-team>.cloudflareaccess.com"
+NUXT_ALLOWED_EMAIL = "user@example.com"
+NUXT_ACCESS_AUDIENCE = "<your-access-audience-tag>"
+NUXT_ACCESS_TEAM_DOMAIN = "<your-team>.cloudflareaccess.com"
 ```
 
 ## 6. Cloudflare Access 設定
@@ -144,11 +144,15 @@ npx wrangler deploy
 
 ## 9. 環境変数一覧
 
+> **重要**: `runtimeConfig` は `NUXT_` プレフィックスの環境変数でのみ上書きされる。
+> `[vars]` にプレフィックスを付けないと、本番で値が空になり認証が 500 になる。
+
 | 変数名 | 用途 | 設定場所 |
 |---|---|---|
-| `ALLOWED_EMAIL` | 許可するメールアドレス | wrangler.toml / Secrets |
-| `ACCESS_AUDIENCE` | Access アプリケーションの Audience Tag | wrangler.toml |
-| `ACCESS_TEAM_DOMAIN` | Cloudflare Zero Trust チームドメイン（`https://` 不要） | wrangler.toml |
+| `NUXT_ALLOWED_EMAIL` | 許可するメールアドレス | wrangler.toml / Secrets |
+| `NUXT_ACCESS_AUDIENCE` | Access アプリケーションの Audience Tag | wrangler.toml |
+| `NUXT_ACCESS_TEAM_DOMAIN` | Cloudflare Zero Trust チームドメイン（`https://` 不要） | wrangler.toml |
+| `NUXT_DEV_USER_EMAIL` | ローカル開発用の認証スキップ（**本番では設定しない**） | `.env` のみ |
 | `DB` | D1 バインディング | wrangler.toml |
 
 ## 10. CI/CD
