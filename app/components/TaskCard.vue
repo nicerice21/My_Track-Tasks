@@ -21,6 +21,7 @@ const isDone = computed(() => props.task.status === 'completed');
     <input
       type="checkbox"
       class="checkbox checkbox-sm"
+      :aria-label="isDone ? task.title + 'を未完了に戻す' : task.title + 'を完了にする'"
       :checked="isDone"
       @change="emit('toggle', task)"
     />
