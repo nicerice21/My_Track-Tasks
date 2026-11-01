@@ -1,17 +1,7 @@
-export default defineEventHandler(async (event) => {
-  const user = event.context.user as { email: string } | undefined;
+import { getAuthUser } from '../../utils/auth';
+import { ok } from '../../utils/response';
 
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized',
-    });
-  }
-
-  return {
-    success: true,
-    data: {
-      email: user.email,
-    },
-  };
+export default defineEventHandler((event) => {
+  const user = getAuthUser(event);
+  return ok({ email: user.email });
 });

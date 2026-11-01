@@ -140,27 +140,30 @@ npx wrangler deploy
 | `ACCESS_TEAM_DOMAIN` | Cloudflare Zero Trust チームドメイン（`https://` 不要） | wrangler.toml |
 | `DB` | D1 バインディング | wrangler.toml |
 
-## 10. CI/CD（オプション）
+## 10. CI/CD
 
-GitHub Actions でデプロイ：
+2 つの GitHub Actions ワークフローを設定済み。
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm ci
-      - run: npm run build:cloudflare
-      - run: npx wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+### 10.1 CI（`.github/workflows/ci.yml`）
+
+全ブランチへの push と main への PR で実行。`typecheck` → `test` → `build:cloudflare` を実行する。
+
+### 10.2 Deploy（`.github/workflows/deploy.yml`）
+
+`main` への push と手動実行（`workflow_dispatch`）で実行。[cloudflare/wrangler-action](https://github.com/cloudflare/wrangler-action) を使い、`wrangler.toml` の `[build]` コマンド（`npx nuxt build --preset=cloudflare_module`）を実行してからデプロイする。
+
+### 10.3 必要なリポジトリシークレット
+
+| シークレット | 説明 |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | 「Edit Cloudflare Workers」権限を持つ API トークン |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare アカウント ID |
+
+GitHub CLI で設定する場合：
+
+```bash
+gh secret set CLOUDFLARE_API_TOKEN
+gh secret set CLOUDFLARE_ACCOUNT_ID
 ```
+
+公式ドキュメント: [Cloudflare Workers CI/CD](https://developers.cloudflare.com/workers/wrangler/ci-cd/)
