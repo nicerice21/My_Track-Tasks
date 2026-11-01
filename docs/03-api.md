@@ -2,8 +2,8 @@
 
 Nuxt の `server/api/` 配下に Nitro ハンドラを配置。すべてのエンドポイントは `/api/v1/` 配下。
 
-> **実装状況（Milestone 1）**: 科目・プロジェクト・タスクの CRUD とタスクの完了/未完了を実装済み。
-> 進捗ログ（progress-logs）とダッシュボード集計は Milestone 2/3 で実装する。
+> **実装状況（Milestone 3）**: 科目・プロジェクト・タスクの CRUD、タスクの完了/未完了、
+> 進捗ログの CRUD、繰り返しタスク（毎週）の完了処理、ダッシュボード集計を実装済み。
 
 ## 1. ベース URL
 
@@ -202,7 +202,10 @@ https://todo.example.com/api/v1
 
 #### POST /api/v1/tasks/:id/complete
 
-タスクを完了状態にする。`recurrence_rule` がある場合は `task_completions` に完了履歴を記録。
+タスクを完了状態にする。
+
+- **通常タスク**: `status` を `completed` にする。
+- **繰り返しタスク**（`recurrenceRule` あり）: `task_completions` に完了履歴を記録し、マスターの `status` は次週に備えて `not_started` のままにする。レスポンスは `{ id, status, completedDate, recurring }` を返す。
 
 **リクエスト:**
 
@@ -214,7 +217,9 @@ https://todo.example.com/api/v1
 
 #### POST /api/v1/tasks/:id/uncomplete
 
-タスクを未完了に戻す。
+タスクを未完了に戻す。繰り返しタスクは直近の完了履歴（`task_completions`）を削除する。
+
+> **補足**: タスク一覧・ダッシュボードのレスポンスでは、繰り返しタスクに「今週完了済みか」を表す `completedThisWeek` フィールドが付与される。
 
 ---
 

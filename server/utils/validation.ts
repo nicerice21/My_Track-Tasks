@@ -52,6 +52,13 @@ export function toPositiveInt(value: string | undefined): number | null {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+export const progressLogCreateSchema = z.object({
+  content: z.string().min(1).max(5000),
+  progressPercent: z.number().int().min(0).max(100).optional(),
+});
+
+export const progressLogUpdateSchema = progressLogCreateSchema.partial();
+
 /** ルートパラメータから正の整数 ID を厳密に取り出す。 */
 export function parseId(value: string | undefined): number {
   const id = toPositiveInt(value);

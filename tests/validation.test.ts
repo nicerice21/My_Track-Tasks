@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  progressLogCreateSchema,
   projectCreateSchema,
   subjectCreateSchema,
   taskCreateSchema,
@@ -112,5 +113,33 @@ describe('toPositiveInt', () => {
 
   it('returns null for floats', () => {
     expect(toPositiveInt('3.14')).toBeNull();
+  });
+});
+
+describe('progressLogCreateSchema', () => {
+  it('accepts content with optional progress percent', () => {
+    const result = progressLogCreateSchema.safeParse({
+      content: '理論モデル作成完了',
+      progressPercent: 30,
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.progressPercent).toBe(30);
+  });
+
+  it('allows omitting progress percent', () => {
+    expect(
+      progressLogCreateSchema.safeParse({ content: 'メモ' }).success,
+    ).toBe(true);
+  });
+
+  it('rejects empty content', () => {
+    expect(progressLogCreateSchema.safeParse({ content: '' }).success).toBe(false);
+  });
+
+  it('rejects progress percent over 100', () => {
+    expect(
+      progressLogCreateSchema.safeParse({ content: 'x', progressPercent: 101 })
+        .success,
+    ).toBe(false);
   });
 });

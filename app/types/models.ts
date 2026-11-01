@@ -38,6 +38,8 @@ export interface Task {
   actualMinutes: number;
   createdAt: string;
   updatedAt: string;
+  /** 繰り返しタスクの「今週完了済みか」（API の一覧・ダッシュボードで付与） */
+  completedThisWeek?: boolean;
 }
 
 export interface ProgressLog {
@@ -96,4 +98,9 @@ export interface TaskInput {
   recurrenceRule?: string | null;
   estimatedMinutes?: number | null;
   actualMinutes?: number | null;
+}
+
+export interface ProgressLogInput {
+  content: string;
+  progressPercent?: number;
 }

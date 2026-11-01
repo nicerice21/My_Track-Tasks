@@ -32,19 +32,24 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString();
   const completedDate = parsed.data?.completedDate ?? Date.now();
 
-  await db
-    .update(tasks)
-    .set({ status: 'completed', updatedAt: now })
-    .where(eq(tasks.id, id));
-
-  // 繰り返しタスクは完了履歴を残す（毎週表示は Milestone 3 で実装）
   if (task.recurrenceRule) {
+    // 繰り返しタスク: 完了履歴を残し、マスターは次の週に備えて未着手に戻す
     await db.insert(taskCompletions).values({
       taskId: id,
       completedDate,
       createdAt: now,
     });
+    await db
+      .update(tasks)
+      .set({ status: 'not_started', updatedAt: now })
+      .where(eq(tasks.id, id));
+    return ok({ id, status: 'not_started', completedDate, recurring: true });
   }
 
-  return ok({ id, status: 'completed', completedDate });
+  await db
+    .update(tasks)
+    .set({ status: 'completed', updatedAt: now })
+    .where(eq(tasks.id, id));
+
+  return ok({ id, status: 'completed', completedDate, recurring: false });
 });

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Task } from '~/types/models';
 import { TASK_TYPE_LABELS, formatDueDate } from '~/utils/format';
+import { isTaskDone } from '~/utils/task';
 
 const props = defineProps<{
   task: Task;
@@ -11,7 +12,8 @@ const emit = defineEmits<{
   toggle: [task: Task];
 }>();
 
-const isDone = computed(() => props.task.status === 'completed');
+const isDone = computed(() => isTaskDone(props.task));
+const isRecurring = computed(() => props.task.recurrenceRule !== null);
 </script>
 
 <template>
@@ -44,6 +46,7 @@ const isDone = computed(() => props.task.status === 'completed');
         <span class="badge badge-ghost badge-sm">
           {{ TASK_TYPE_LABELS[task.type] }}
         </span>
+        <span v-if="isRecurring" class="badge badge-outline badge-sm">毎週</span>
         <PriorityBadge :priority="task.priority" />
         <span>{{ formatDueDate(task.dueDate) }}</span>
       </div>

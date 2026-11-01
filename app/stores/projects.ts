@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia';
-import type { Project, ProjectDetail, ProjectInput } from '~/types/models';
+import type {
+  ProgressLog,
+  ProgressLogInput,
+  Project,
+  ProjectDetail,
+  ProjectInput,
+} from '~/types/models';
 
 export const useProjectsStore = defineStore('projects', {
   state: () => ({
@@ -32,6 +38,15 @@ export const useProjectsStore = defineStore('projects', {
     async remove(id: number) {
       await useApi().del(`/projects/${id}`);
       this.items = this.items.filter((p) => p.id !== id);
+    },
+    async addProgressLog(projectId: number, input: ProgressLogInput) {
+      return useApi().post<ProgressLog>(
+        `/projects/${projectId}/progress-logs`,
+        input,
+      );
+    },
+    async removeProgressLog(id: number) {
+      await useApi().del(`/progress-logs/${id}`);
     },
   },
 });

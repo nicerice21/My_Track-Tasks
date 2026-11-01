@@ -1,6 +1,7 @@
 import { and, desc, eq, gte, lt, ne } from 'drizzle-orm';
 import { projects, tasks } from '../../db/schema';
 import { getAuthUser } from '../../utils/auth';
+import { annotateCompletedThisWeek } from '../../utils/completion';
 import { useD1 } from '../../utils/db';
 import { ok } from '../../utils/response';
 
@@ -70,11 +71,19 @@ export default defineEventHandler(async (event) => {
         .all(),
     ]);
 
+  // 繰り返しタスクの「今週完了済み」を付与する
+  const [today, overdue, reports, homework] = await Promise.all([
+    annotateCompletedThisWeek(db, todayTasks),
+    annotateCompletedThisWeek(db, overdueTasks),
+    annotateCompletedThisWeek(db, upcomingReports),
+    annotateCompletedThisWeek(db, weeklyHomework),
+  ]);
+
   return ok({
-    todayTasks,
-    overdueTasks,
-    upcomingReports,
-    weeklyHomework,
+    todayTasks: today,
+    overdueTasks: overdue,
+    upcomingReports: reports,
+    weeklyHomework: homework,
     activeProjects,
   });
 });
