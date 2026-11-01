@@ -17,7 +17,7 @@ database_id = "d6dcc3d4-ac27-415b-9e32-8875010ab481"
 
 [vars]
 NUXT_ALLOWED_EMAIL = "task@ricezero.fun"
-NUXT_ACCESS_AUDIENCE = "553ba0e3de67718db1445920d95fed96a66716c8fcdf536cb4d02b6b4e4fb3fa"
+NUXT_ACCESS_AUDIENCE = "34af06d8960d7c13f1ff0f088eb8a14c2372c43ca5271c985172d584fa29e799"
 NUXT_ACCESS_TEAM_DOMAIN = "ricezero.cloudflareaccess.com"
 
 # ...
