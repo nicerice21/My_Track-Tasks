@@ -64,8 +64,12 @@ compatibility_flags = ["nodejs_compat"]
 [build]
 command = "npx nuxt build --preset=cloudflare_module"
 
+[assets]
+directory = "./.output/public"
+binding = "ASSETS"
+
 [[d1_databases]]
-binding = "DB"
+binding = "MY_TODO_DB"
 database_name = "my-todo-db"
 database_id = "<your-database-id>"
 

@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-04-01',
   srcDir: 'app/',
   serverDir: 'server',
+  dir: {
+    public: '../public',
+  },
   devtools: { enabled: true },
 
   modules: [
