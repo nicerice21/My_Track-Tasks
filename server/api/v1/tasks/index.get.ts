@@ -1,6 +1,7 @@
 import { and, count, desc, eq, gte, lte } from 'drizzle-orm';
 import { tasks } from '../../../db/schema';
 import { getAuthUser } from '../../../utils/auth';
+import { annotateCompletedThisWeek } from '../../../utils/completion';
 import { useD1 } from '../../../utils/db';
 import { parseTaskFilters } from '../../../utils/filters';
 import { ok } from '../../../utils/response';
@@ -47,8 +48,10 @@ export default defineEventHandler(async (event) => {
     db.select({ value: count() }).from(tasks).where(where).all(),
   ]);
 
+  const items = await annotateCompletedThisWeek(db, rows);
+
   return ok({
-    items: rows,
+    items,
     total: totalRows[0]?.value ?? 0,
     limit: filters.limit,
     offset: filters.offset,
