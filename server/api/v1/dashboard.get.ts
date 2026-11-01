@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
         .select()
         .from(tasks)
         .where(
-          and(...activeTaskConditions, eq(tasks.type, 'homework'), gte(tasks.dueDate, now), lt(tasks.dueDate, endOfWeek)),
+          and(...activeTaskConditions, eq(tasks.type, 'homework'), gte(tasks.dueDate, startOfToday), lt(tasks.dueDate, endOfWeek)),
         )
         .orderBy(desc(tasks.dueDate))
         .all(),
